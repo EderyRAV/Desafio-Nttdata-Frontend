@@ -20,14 +20,12 @@
     </properties>
 
     <dependencies>
-        <!-- Automatización del navegador -->
         <dependency>
             <groupId>com.microsoft.playwright</groupId>
             <artifactId>playwright</artifactId>
             <version>${playwright.version}</version>
         </dependency>
 
-        <!-- Cucumber: motor que interpreta el Gherkin (.feature) y lo conecta con los @Dado/@Cuando/@Entonces -->
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-java</artifactId>
@@ -35,7 +33,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Runner de Cucumber sobre JUnit (permite ejecutar con "mvn test") -->
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-junit</artifactId>
@@ -52,7 +49,6 @@
 
     <build>
         <plugins>
-            <!-- Compila el código de src/test/java (Java 17) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -62,19 +58,12 @@
                 </configuration>
             </plugin>
 
-            <!-- Ejecuta las pruebas con "mvn test" / "mvn clean test" -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
             </plugin>
 
-            <!--
-              exec-maven-plugin: solo sirve para el comando de instalación de navegadores de
-              Playwright (ver README, sección "Instalación de navegadores"). No corre en
-              ningún ciclo de build automático, hay que invocarlo a mano una sola vez:
-                mvn exec:java@install-playwright-browsers
-            -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>

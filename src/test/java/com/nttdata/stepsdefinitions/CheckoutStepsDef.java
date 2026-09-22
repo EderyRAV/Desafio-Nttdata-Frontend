@@ -27,8 +27,6 @@ public class CheckoutStepsDef {
         screenShot();
     }
 
-    // {string} tres veces seguidas: Cucumber los asigna EN ORDEN a los parámetros
-    // del método (nombre, apellido, codigoPostal) según aparecen en el texto.
     @Dado("que lleno el formulario de checkout con nombre {string}, apellido {string} y codigo postal {string}")
     @Cuando("lleno el formulario de checkout con nombre {string}, apellido {string} y codigo postal {string}")
     public void lleno_el_formulario_de_checkout(String nombre, String apellido, String codigoPostal) {
@@ -62,9 +60,6 @@ public class CheckoutStepsDef {
         double subtotal = checkoutSteps().subtotal();
         double impuesto = checkoutSteps().impuesto();
         double total = checkoutSteps().total();
-        // se compara con un margen de error (0.01) porque son operaciones con
-        // decimales (double) — comparar con "==" a veces falla por redondeo binario
-        // aunque el resultado sea matemáticamente correcto.
         Assert.assertEquals(subtotal + impuesto, total, 0.01);
     }
 
@@ -74,10 +69,6 @@ public class CheckoutStepsDef {
         screenShot();
     }
 
-    // OJO: el texto es "...mensaje de confirmación..." y NO simplemente "el
-    // mensaje" — LoginStepsDef ya define un step "debería ver el mensaje {string}"
-    // (para el guard de rutas). Cucumber no permite dos step definitions distintas
-    // que matcheen el mismo texto exacto (DuplicateStepDefinitionException).
     @Entonces("debería ver el mensaje de confirmación {string}")
     public void deberia_ver_el_mensaje_de_confirmacion(String mensajeEsperado) {
         Assert.assertEquals(mensajeEsperado, checkoutSteps().mensajeConfirmacion());

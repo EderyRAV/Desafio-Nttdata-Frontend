@@ -3,15 +3,6 @@ package com.nttdata.page;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
-/**
- * Page Object del PASO 2 del checkout (/checkout-step-two.html): el "Overview"
- * (resumen) que se ve justo antes de confirmar la compra. Aquí es donde se puede
- * validar que el total cobrado sea matemáticamente correcto (subtotal + impuesto).
- *
- * Los textos vienen con etiqueta incluida (ej. "Tax: $2.40", no solo "2.40"),
- * así que la conversión a número se hace en la capa de Steps, no aquí — este
- * Page Object solo expone los Locators "en crudo".
- */
 public class CheckoutStepTwoPage {
 
     public Locator paymentInfo;

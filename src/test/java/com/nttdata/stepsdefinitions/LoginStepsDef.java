@@ -11,15 +11,6 @@ import com.microsoft.playwright.Page;
 import static com.nttdata.core.DriverManager.getPage;
 import static com.nttdata.core.DriverManager.screenShot;
 
-/**
- * "Glue" de Cucumber: conecta cada línea del .feature (en español) con código Java.
- * El texto entre las anotaciones (@Dado/@Cuando/@Entonces) tiene que calzar EXACTO
- * (salvo los {string}, que capturan lo que esté entre comillas en el Gherkin) con
- * la línea del Escenario.
- *
- * Esta clase NO interactúa con Locators directamente -> siempre delega en la capa
- * de Steps (LoginSteps/InventorySteps), que es la que sabe cómo usar el Page Object.
- */
 public class LoginStepsDef {
 
     private Page page;
@@ -39,9 +30,6 @@ public class LoginStepsDef {
         screenShot();
     }
 
-    // Usado como Background en carrito.feature/checkout.feature: navega, llena
-    // usuario/contraseña y hace click, todo en un solo step (esos features no
-    // necesitan probar el login paso a paso, solo necesitan quedar autenticados).
     @Dado("que inicié sesión como {string}")
     public void que_inicie_sesion_como(String usuario) {
         page = getPage();
@@ -76,8 +64,6 @@ public class LoginStepsDef {
         Assert.assertEquals(tituloEsperado, titulo);
     }
 
-    // Genérico para mensajes que NO son de un intento de login (ej. el guard de
-    // ruta "Epic sadface: You can only access..."), pero usan el mismo banner rojo.
     @Entonces("debería ver el mensaje {string}")
     public void deberia_ver_el_mensaje(String mensajeEsperado) {
         Assert.assertEquals(mensajeEsperado, loginSteps().textoMensajeError());

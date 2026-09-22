@@ -31,11 +31,6 @@ public class InventorySteps {
         inventoryPage.cartLink.click();
     }
 
-    /**
-     * Traduce la etiqueta visible del combo (la que aparece en el Gherkin, en
-     * español legible) al "value" real del <option> en el HTML. Mantener esta
-     * traducción en un solo lugar evita repetir los 4 valores en cada step.
-     */
     public void ordenarCatalogoPor(String etiquetaVisible) {
         String value = switch (etiquetaVisible) {
             case "Name (A to Z)" -> "az";
@@ -57,11 +52,6 @@ public class InventorySteps {
         return nombres.get(nombres.size() - 1);
     }
 
-    /**
-     * Lee el numerito rojo del carrito ("shopping_cart_badge"). Sauce Demo NO
-     * renderiza ese <span> cuando el carrito está vacío (no es que diga "0"),
-     * por eso "obtenerContadorCarrito" devuelve "" en ese caso en vez de fallar.
-     */
     public String obtenerContadorCarrito() {
         if (inventoryPage.cartBadge.count() == 0) {
             return "";

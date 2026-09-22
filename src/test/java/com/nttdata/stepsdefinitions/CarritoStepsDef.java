@@ -11,18 +11,6 @@ import org.junit.Assert;
 import static com.nttdata.core.DriverManager.getPage;
 import static com.nttdata.core.DriverManager.screenShot;
 
-/**
- * Glue de Cucumber para carrito.feature. Une dos capas de Steps porque agregar
- * un producto ocurre en la página de catálogo (InventorySteps) pero verificar
- * qué contiene o quitar un producto ocurre en la página del carrito (CartSteps).
- *
- * OJO: a diferencia de LoginStepsDef, aquí NO se guarda "page" en un campo de la
- * clase. Cucumber crea una instancia NUEVA de cada *StepsDef por escenario, y el
- * login (que deja la sesión iniciada) ocurre en LoginStepsDef, una clase distinta
- * — su campo "page" no es el mismo objeto que el de esta clase. Por eso cada
- * método vuelve a pedirle la página actual a DriverManager.getPage() (el único
- * dato realmente compartido entre todas las *StepsDef de un mismo escenario).
- */
 public class CarritoStepsDef {
 
     private InventorySteps inventorySteps() {
@@ -33,12 +21,6 @@ public class CarritoStepsDef {
         return new CartSteps(getPage());
     }
 
-    // Un mismo método puede tener varias anotaciones: es la MISMA acción, solo
-    // que en unos escenarios se usa como precondición ("Dado/Y agregué...") y en
-    // otros como la acción que se está probando ("Cuando agrego..."). El texto
-    // que matchea NO incluye la palabra clave (Dado/Y/Cuando) — por eso "agregué
-    // el producto..." (sin "que" adelante) tiene que ser IDÉNTICO se use con
-    // "Dado", "Y" o cualquier otra palabra clave en el .feature.
     @Dado("agregué el producto {string} al carrito")
     @Cuando("agrego el producto {string} al carrito")
     public void agrego_el_producto_al_carrito(String nombreProducto) {

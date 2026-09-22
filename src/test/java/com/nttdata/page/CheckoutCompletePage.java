@@ -3,7 +3,6 @@ package com.nttdata.page;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
-/** Page Object de la pantalla final (/checkout-complete.html): confirmación de compra. */
 public class CheckoutCompletePage {
 
     public Locator header;
