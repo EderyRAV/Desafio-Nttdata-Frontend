@@ -1,5 +1,4 @@
 package com.nttdata.page;
-
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Locator;
 
