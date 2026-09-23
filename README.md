@@ -2,11 +2,6 @@
 
 Suite de pruebas automatizadas con **Playwright (Java) + Cucumber-JVM** para [Sauce Demo](https://www.saucedemo.com/), usando Page Object Model.
 
-## Requisitos
-
-- Java 17+
-- Maven
-
 ## Instalación
 
 Instalar los navegadores de Playwright (una sola vez):

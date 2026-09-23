@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Estrategia de Pruebas · Frontend (Sauce Demo)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0A1420; --panel:#0F1D30; --panel-2:#12233A; --line:rgba(94,200,242,.18);
+  --cyan:#5EC8F2; --mint:#4FD1A5; --coral:#FF6B4D;
+  --text:#E7F1FB; --muted:#7E97B3;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#0A1420;--text:#E7F1FB}}
+:root[data-theme="dark"]{--ink:#0A1420;--text:#E7F1FB}
+body{
+  margin:0; background:var(--ink); color:var(--text);
+  font-family:'JetBrains Mono',monospace; line-height:1.65;
+  background-image:
+    linear-gradient(var(--line) 1px,transparent 1px),
+    linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:38px 38px;
+}
+h1,h2,h3,.disp{font-family:'Space Grotesk',sans-serif; font-weight:700; letter-spacing:-.01em}
+.wrap{max-width:980px;margin:0 auto;padding:0 24px}
+a{color:var(--cyan)}
+.tag{display:inline-block;font-size:.72rem;padding:2px 8px;border:1px solid var(--line);border-radius:3px;color:var(--muted);background:rgba(94,200,242,.06)}
+.crosshair{position:relative}
+.crosshair::before,.crosshair::after{content:"";position:absolute;width:14px;height:14px;border:1.5px solid var(--cyan);opacity:.7}
+.crosshair::before{top:-1px;left:-1px;border-right:none;border-bottom:none}
+.crosshair::after{bottom:-1px;right:-1px;border-left:none;border-top:none}
+
+.hero{padding:96px 0 72px;border-bottom:1px solid var(--line)}
+.hero .frame{border:1px solid var(--line);padding:44px 36px;background:linear-gradient(180deg,rgba(94,200,242,.05),transparent)}
+.eyebrow{color:var(--mint);font-size:.8rem;margin:0 0 14px}
+.hero h1{font-size:clamp(2.1rem,5vw,3.4rem);margin:0 0 12px;color:var(--text)}
+.hero p.sub{color:var(--muted);max-width:56ch;margin:0 0 28px;font-size:.95rem}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+.stats div{background:var(--ink);padding:16px 18px}
+.stats .n{font-family:'Space Grotesk';font-size:1.7rem;color:var(--cyan)}
+.stats .l{color:var(--muted);font-size:.72rem}
+
+section.block{padding:64px 0;border-bottom:1px solid var(--line)}
+.head{display:flex;align-items:baseline;gap:14px;margin-bottom:8px}
+.num{color:var(--cyan);font-family:'Space Grotesk';font-size:.85rem}
+h2{font-size:1.5rem;margin:0;color:var(--text)}
+.lede{color:var(--muted);font-size:.88rem;max-width:64ch;margin:6px 0 30px}
+
+.vs{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:center;margin-bottom:16px}
+.vscard{border:1px solid;padding:18px 16px;text-align:center;background:var(--panel)}
+.vscard b{font-family:'Space Grotesk';display:block;font-size:.95rem;margin-bottom:4px}
+.vscard span{color:var(--muted);font-size:.78rem}
+.vscard.ok{border-color:var(--mint)}
+.vscard.ok b{color:var(--mint)}
+.vscard.bad{border-color:var(--coral)}
+.vscard.bad b{color:var(--coral)}
+.vsmid{color:var(--muted);font-size:.74rem;text-align:center;white-space:nowrap}
+.chips{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap}
+
+table{width:100%;border-collapse:collapse;font-size:.84rem}
+th,td{border:1px solid var(--line);padding:12px 14px;text-align:left;vertical-align:top}
+th{color:var(--mint);font-weight:500;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;background:var(--panel-2)}
+td.val{color:var(--cyan)}
+tr:nth-child(even) td{background:var(--panel)}
+
+.diagram{background:var(--panel);border:1px solid var(--line);padding:20px 10px;margin-bottom:22px}
+.diagram h3{font-family:'Space Grotesk';font-size:.85rem;color:var(--text);margin:0 0 10px;padding:0 10px}
+.legend{display:flex;gap:22px;flex-wrap:wrap;margin:16px 0 8px;font-size:.78rem;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.dot{width:16px;height:2px;display:inline-block}
+
+.chain{display:flex;align-items:stretch;gap:0;flex-wrap:wrap;margin-top:10px}
+.cstep{border:1px solid var(--line);background:var(--panel-2);padding:16px 18px;flex:1;min-width:200px}
+.cstep .op{color:var(--coral);font-family:'Space Grotesk';font-size:.8rem;display:block;margin-bottom:6px}
+.cstep b{display:block;color:var(--text);font-size:.88rem;margin-bottom:4px}
+.cstep p{margin:0;color:var(--muted);font-size:.8rem}
+.arrow{display:flex;align-items:center;justify-content:center;color:var(--cyan);padding:0 12px;font-size:1.1rem}
+
+.checklist{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin:20px 0}
+.check-item{background:var(--ink);padding:14px 16px;font-size:.82rem;color:var(--text)}
+.check-item::before{content:"✓ ";color:var(--mint)}
+
+footer{padding:60px 0 100px}
+footer p{color:var(--muted);font-size:.85rem;max-width:66ch}
+footer p b{color:var(--text);font-weight:500}
+
+@keyframes draw{to{stroke-dashoffset:0}}
+.flow-path{stroke-dasharray:900;stroke-dashoffset:900;animation:draw 2.4s ease forwards}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="frame crosshair">
+      <p class="eyebrow">Sauce Demo · e2e</p>
+      <h1>Estrategia de pruebas<br>del carrito y checkout</h1>
+      <p class="sub">Login, catálogo, carrito y checkout tratados como un mismo flujo de estados, con verificación manual antes de automatizar.</p>
+      <div class="stats">
+        <div><div class="n">2</div><div class="l">máquinas de estado</div></div>
+        <div><div class="n">4</div><div class="l">combinaciones de orden</div></div>
+        <div><div class="n">3</div><div class="l">campos vaciados uno a uno</div></div>
+        <div><div class="n">3</div><div class="l">capas del Page Object Model</div></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="block" id="limites">
+  <div class="wrap">
+    <div class="head"><span class="num">01</span><h2>Límites y agrupaciones</h2></div>
+    <p class="lede">Sin límites numéricos aquí: las clases de equivalencia se definen por identidad de usuario y por presencia o ausencia de dato.</p>
+
+    <div class="vs">
+      <div class="vscard ok"><b>standard_user</b><span>activo, login exitoso</span></div>
+      <div class="vsmid">misma password →</div>
+      <div class="vscard bad"><b>locked_out_user</b><span>bloqueado, error explícito</span></div>
+    </div>
+    <div class="chips"><span class="tag">login.feature</span></div>
+
+    <div class="vs" style="margin-top:34px">
+      <div class="vscard bad"><b>campo vacío</b><span>dispara error</span></div>
+      <div class="vsmid">la app no valida formato →</div>
+      <div class="vscard ok"><b>campo con contenido</b><span>pasa, sin importar el formato</span></div>
+    </div>
+    <div class="chips"><span class="tag">checkout.feature · @fields</span></div>
+  </div>
+</section>
+
+<section class="block" id="decision">
+  <div class="wrap">
+    <div class="head"><span class="num">02</span><h2>Tabla de decisión</h2></div>
+    <p class="lede">Dos atributos del combo de orden del catálogo — campo × dirección — cuatro combinaciones con su resultado esperado.</p>
+    <table>
+      <tr><th>Campo</th><th>Dirección</th><th>Primer producto</th><th>Último producto</th></tr>
+      <tr><td>Nombre</td><td class="val">A-Z</td><td>Sauce Labs Backpack</td><td>Test.allTheThings() T-Shirt (Red)</td></tr>
+      <tr><td>Nombre</td><td class="val">Z-A</td><td>Test.allTheThings() T-Shirt (Red)</td><td>Sauce Labs Backpack</td></tr>
+      <tr><td>Precio</td><td class="val">low-high</td><td>Sauce Labs Onesie</td><td>Sauce Labs Fleece Jacket</td></tr>
+      <tr><td>Precio</td><td class="val">high-low</td><td>Sauce Labs Fleece Jacket</td><td>Sauce Labs Onesie</td></tr>
+    </table>
+    <div class="chips" style="margin-top:16px"><span class="tag">carrito.feature · @data-content · Esquema del escenario</span></div>
+  </div>
+</section>
+
+<section class="block" id="estados">
+  <div class="wrap">
+    <div class="head"><span class="num">03</span><h2>Transición de estados</h2></div>
+    <p class="lede">Dos máquinas conviven: el ciclo del carrito y la sesión del usuario. Ninguna transición de "Cancel" pierde el contenido del carrito.</p>
+
+    <div class="diagram">
+      <h3>Carrito</h3>
+      <svg viewBox="0 0 940 300" width="100%" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="ah1" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#5EC8F2"/></marker>
+          <marker id="ahm1" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#4FD1A5"/></marker>
+        </defs>
+
+        <path class="flow-path" d="M470,110 C470,58 375,58 280,110" fill="none" stroke="#4FD1A5" stroke-width="1.6" stroke-dasharray="5,5" marker-end="url(#ahm1)"/>
+        <text x="375" y="46" fill="#4FD1A5" font-size="10.5" text-anchor="middle" font-family="JetBrains Mono">cancel → mantiene carrito</text>
+
+        <path class="flow-path" d="M660,110 C660,22 280,22 280,108" fill="none" stroke="#4FD1A5" stroke-width="1.6" stroke-dasharray="5,5" marker-end="url(#ahm1)"/>
+        <text x="470" y="14" fill="#4FD1A5" font-size="10.5" text-anchor="middle" font-family="JetBrains Mono">cancel → catálogo, mantiene carrito</text>
+
+        <g font-family="Space Grotesk" font-size="12.5" font-weight="600">
+          <rect x="25" y="110" width="130" height="60" rx="2" fill="#0F1D30" stroke="#5EC8F2"/>
+          <text x="90" y="145" fill="#E7F1FB" text-anchor="middle">Vacío</text>
+
+          <rect x="215" y="110" width="130" height="60" rx="2" fill="#0F1D30" stroke="#5EC8F2"/>
+          <text x="280" y="140" fill="#E7F1FB" text-anchor="middle">Con</text>
+          <text x="280" y="155" fill="#E7F1FB" text-anchor="middle">productos</text>
+
+          <rect x="405" y="110" width="130" height="60" rx="2" fill="#0F1D30" stroke="#5EC8F2"/>
+          <text x="470" y="140" fill="#E7F1FB" text-anchor="middle">Checkout</text>
+          <text x="470" y="155" fill="#E7F1FB" text-anchor="middle">paso 1</text>
+
+          <rect x="595" y="110" width="130" height="60" rx="2" fill="#0F1D30" stroke="#5EC8F2"/>
+          <text x="660" y="140" fill="#E7F1FB" text-anchor="middle">Checkout</text>
+          <text x="660" y="155" fill="#E7F1FB" text-anchor="middle">paso 2</text>
+
+          <rect x="785" y="110" width="130" height="60" rx="2" fill="#0F1D30" stroke="#5EC8F2"/>
+          <text x="850" y="145" fill="#E7F1FB" text-anchor="middle">Confirmado</text>
+        </g>
+
+        <line x1="155" y1="140" x2="212" y2="140" stroke="#5EC8F2" stroke-width="1.6" marker-end="url(#ah1)"/>
+        <text x="183" y="130" fill="#7E97B3" font-size="10" text-anchor="middle" font-family="JetBrains Mono">agrega</text>
+
+        <line x1="345" y1="140" x2="402" y2="140" stroke="#5EC8F2" stroke-width="1.6" marker-end="url(#ah1)"/>
+        <text x="373" y="130" fill="#7E97B3" font-size="10" text-anchor="middle" font-family="JetBrains Mono">checkout</text>
+
+        <line x1="535" y1="140" x2="592" y2="140" stroke="#5EC8F2" stroke-width="1.6" marker-end="url(#ah1)"/>
+        <text x="563" y="130" fill="#7E97B3" font-size="10" text-anchor="middle" font-family="JetBrains Mono">continue</text>
+
+        <line x1="725" y1="140" x2="782" y2="140" stroke="#5EC8F2" stroke-width="1.6" marker-end="url(#ah1)"/>
+        <text x="753" y="130" fill="#7E97B3" font-size="10" text-anchor="middle" font-family="JetBrains Mono">finish</text>
+
+        <path class="flow-path" d="M850,170 C850,268 90,268 90,170" fill="none" stroke="#5EC8F2" stroke-width="1.6" stroke-dasharray="2,6" marker-end="url(#ah1)"/>
+        <text x="470" y="290" fill="#7E97B3" font-size="11" text-anchor="middle" font-family="JetBrains Mono">carrito se vacía tras confirmar</text>
+      </svg>
+    </div>
+
+    <div class="diagram">
+      <h3>Sesión</h3>
+      <svg viewBox="0 0 760 190" width="100%" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="ah2" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#5EC8F2"/></marker>
+          <marker id="ahc2" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#FF6B4D"/></marker>
+        </defs>
+
+        <path class="flow-path" d="M60,110 C60,44 160,44 160,110" fill="none" stroke="#FF6B4D" stroke-width="1.6" stroke-dasharray="5,5" marker-end="url(#ahc2)"/>
+        <text x="110" y="30" fill="#FF6B4D" font-size="10.5" text-anchor="middle" font-family="JetBrains Mono">/cart.html directo → bloqueado</text>
+
+        <g font-family="Space Grotesk" font-size="12.5" font-weight="600">
+          <rect x="25" y="110" width="150" height="60" rx="2" fill="#0F1D30" stroke="#5EC8F2"/>
+          <text x="100" y="140" fill="#E7F1FB" text-anchor="middle">No</text>
+          <text x="100" y="155" fill="#E7F1FB" text-anchor="middle">autenticado</text>
+
+          <rect x="305" y="110" width="150" height="60" rx="2" fill="#0F1D30" stroke="#5EC8F2"/>
+          <text x="380" y="145" fill="#E7F1FB" text-anchor="middle">Autenticado</text>
+
+          <rect x="585" y="110" width="150" height="60" rx="2" fill="#0F1D30" stroke="#5EC8F2"/>
+          <text x="660" y="140" fill="#E7F1FB" text-anchor="middle">Sesión</text>
+          <text x="660" y="155" fill="#E7F1FB" text-anchor="middle">cerrada</text>
+        </g>
+
+        <line x1="175" y1="140" x2="302" y2="140" stroke="#5EC8F2" stroke-width="1.6" marker-end="url(#ah2)"/>
+        <text x="238" y="130" fill="#7E97B3" font-size="10" text-anchor="middle" font-family="JetBrains Mono">login</text>
+
+        <line x1="455" y1="140" x2="582" y2="140" stroke="#5EC8F2" stroke-width="1.6" marker-end="url(#ah2)"/>
+        <text x="518" y="130" fill="#7E97B3" font-size="10" text-anchor="middle" font-family="JetBrains Mono">logout</text>
+      </svg>
+    </div>
+
+    <div class="legend">
+      <span><i class="dot" style="background:#5EC8F2"></i>transición esperada</span>
+      <span><i class="dot" style="background:#4FD1A5"></i>cancel, mantiene datos</span>
+      <span><i class="dot" style="background:#FF6B4D"></i>transición inválida bloqueada</span>
+    </div>
+    <div class="chips" style="margin-top:14px">
+      <span class="tag">checkout.feature · @happy-path</span>
+      <span class="tag">carrito.feature · @unhappy-path</span>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="combinacion">
+  <div class="wrap">
+    <div class="head"><span class="num">04</span><h2>Combinación — expansión lineal</h2></div>
+    <p class="lede">Desde el happy path del checkout (nombre + apellido + código postal completos), se vacía un campo a la vez, en orden.</p>
+    <div class="chain">
+      <div class="cstep"><span class="op">1</span><b>vacío nombre</b><p>→ error de nombre</p></div>
+      <div class="arrow">→</div>
+      <div class="cstep"><span class="op">2</span><b>con nombre, vacío apellido</b><p>→ error de apellido</p></div>
+      <div class="arrow">→</div>
+      <div class="cstep"><span class="op">3</span><b>con nombre y apellido, vacío c.p.</b><p>→ error de código postal</p></div>
+    </div>
+    <div class="chips" style="margin-top:20px"><span class="tag">checkout.feature · @fields · Esquema del escenario</span></div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="head"><span class="num">·</span><h2>Cómo se registran los resultados</h2></div>
+    <p>Nada se automatizó por supuesto: cada dato se <b>verificó a mano en el sitio real</b> antes de escribir el escenario correspondiente.</p>
+    <div class="checklist">
+      <div class="check-item">mensajes de error</div>
+      <div class="check-item">selectores</div>
+      <div class="check-item">cálculo del total</div>
+      <div class="check-item">comportamiento de "Cancel"</div>
+    </div>
+    <p>Organización en <b>3 capas (Page Object Model)</b> — detalle completo en el README.</p>
+  </div>
+</footer>
+
+</body>
+</html>
